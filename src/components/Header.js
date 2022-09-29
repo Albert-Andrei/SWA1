@@ -5,8 +5,9 @@ const Header = () => {
   return (
     <div>
       <h1>
-        Assignment 1 - <Link href="/">Fetch</Link> | 
-        <Link href="/alternative">XMLHttpRequest</Link>
+        Assignment 1 - <Link href="/">Fetch</Link> | {' '}
+        <Link href="/alternative">XMLHttpRequest</Link> | {' '}
+        <Link href="/send">Send data</Link>
       </h1>
     </div>
   );

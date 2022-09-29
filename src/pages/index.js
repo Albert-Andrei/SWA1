@@ -3,10 +3,10 @@ import styles from '../styles/Home.module.css'
 import React, { useEffect, useState } from "react";
 import { WeatherService } from "services/WeatherService";
 import Header from "components/Header";
+import {fetchFetcher} from '../lib/fetchers'
 
-const weatherService = WeatherService((...args) =>
-  fetch(...args).then((res) => res.json())
-);
+const weatherService = WeatherService(fetchFetcher);
+
 const LOCATIONS = ["Horsens", "Aarhus", "Copenhagen"];
 
 const Home = () => {

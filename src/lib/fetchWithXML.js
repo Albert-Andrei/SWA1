@@ -1,13 +1,19 @@
-export function fetchWithXMLHttpRequest(url, method = "GET", payload) {
+export const fetchWithXMLHttpRequest = (url, options = {}) => {
   return new Promise((resolve, reject) => {
     const xhttp = new XMLHttpRequest();
     xhttp.responseType = "json";
 
-    xhttp.open(method, url, true);
+    xhttp.open(options.method || "GET", url, true);
 
-    const body = ["POST", "PUT"].includes(method.toUpperCase()) && payload;
-
-    xhttp.send(body);
+    if (options.method != null) {
+      const isSendMethod = ["POST", "PUT"].includes(
+        options.method.toUpperCase()
+      );
+      const body = isSendMethod && options.body;
+      xhttp.send(body);
+    } else {
+      xhttp.send();
+    }
 
     xhttp.onreadystatechange = function () {
       if (this.readyState == 4) {
