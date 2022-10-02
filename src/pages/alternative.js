@@ -3,6 +3,15 @@ import styles from '../styles/Home.module.css';
 import React, { useEffect, useState } from 'react';
 import { WeatherService } from 'services/WeatherService';
 import Header from 'components/Header/Header';
+import LocationSelector from 'components/LocationSelector/LocationSelector';
+import {
+  getMaxTemp,
+  getMinTemp,
+  getPrecipitationSum,
+  getAverageWindSpeed,
+} from 'lib/calculations';
+import ForecastRow from 'components/ForecastRow/ForecastRow';
+import Image from 'next/image';
 import { xmlFetcher } from 'lib/fetchers';
 
 const weatherService = WeatherService(xmlFetcher);
@@ -10,9 +19,15 @@ const weatherService = WeatherService(xmlFetcher);
 const LOCATIONS = ['Horsens', 'Aarhus', 'Copenhagen'];
 
 const Alternative = () => {
+  // States
   const [location, setLocation] = useState(LOCATIONS[0]);
   const [historicalData, setHistoricalData] = useState([]);
   const [forecastData, setForecastData] = useState([]);
+  var array = chunk(historicalData, 4);
+  var variable = array[array.length - 1];
+
+  var yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
 
   useEffect(() => {
     handleLoadData();
@@ -29,8 +44,24 @@ const Alternative = () => {
     ]);
 
     setHistoricalData(historicalData);
-    setForecastData(forecastData);
+    setForecastData(chunk(forecastData, 4));
   }
+
+  function chunk(items, size) {
+    const chunks = [];
+    items = [].concat(...items);
+
+    while (items.length) {
+      chunks.push(items.splice(0, size));
+    }
+
+    return chunks;
+  }
+
+  console.log('Max', getMaxTemp(historicalData));
+  console.log('Min', getMinTemp(historicalData));
+  console.log('Precipitation Sum', getPrecipitationSum(historicalData));
+  console.log('Average Wind Speed', getAverageWindSpeed(historicalData));
 
   return (
     <div className={styles.container}>
@@ -42,45 +73,133 @@ const Alternative = () => {
 
       <Header />
 
-      <main>
-        <div>
-          <label htmlFor="select-location">City</label>
-          <select
-            id="select-location"
-            value={location}
-            onChange={(e) => handleChangeLocation(e.target.value)}
+      <main className="main">
+        <div className="select">
+          <LocationSelector
+            location={location}
+            onLocationChange={(e) => handleChangeLocation(e.target.value)}
+          />
+
+          <div
+            style={{
+              background: 'white',
+              padding: 20,
+              borderRadius: 10,
+              display: 'flex',
+              justifyContent: 'space-between',
+            }}
           >
-            {LOCATIONS.map((location) => (
-              <option key={location}>{location}</option>
-            ))}
-          </select>
+            <p>
+              <b>Min:</b> {getMinTemp(historicalData)}
+            </p>
+            <p>
+              <b> Max:</b> {getMaxTemp(historicalData)}{' '}
+            </p>
+            <p>
+              <b>Precipitation Sum:</b> {getPrecipitationSum(historicalData)}
+            </p>
+            <p>
+              <b>Avg Wind Speed:</b> {getAverageWindSpeed(historicalData)}
+            </p>
+          </div>
         </div>
 
-        <hr />
-
-        <h2>The hourly forecast for the next 24 hours</h2>
-        <table>
+        <table
+          style={{
+            width: '100%',
+            padding: 20,
+            background: 'white',
+            borderRadius: 10,
+            marginTop: 40,
+          }}
+        >
           <thead>
             <tr>
-              <th>Time</th>
-              <th>Type</th>
-              <th>Forecast</th>
+              <th style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                <p style={{ fontSize: 50, fontWeight: 400 }}>
+                  {yesterday.getDate()}
+                  <span
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 300,
+                      color: '#939cb0',
+                      marginLeft: 10,
+                    }}
+                  >
+                    October
+                  </span>
+                </p>
+              </th>
+              <th style={{ width: '20%' }}></th>
+
+              <th>
+                <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                  Temperature
+                </div>
+              </th>
+              <th>
+                <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                  Precipitation
+                </div>
+              </th>
+              <th>
+                <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                  Wind speed
+                </div>
+              </th>
             </tr>
           </thead>
 
-          <tbody>
+          <tbody style={{ borderTop: 1, borderColor: '#ededed' }}>
             {forecastData?.map((forecast, index) => (
               <tr key={index}>
-                <td>{forecast.getFormattedTime()}</td>
-                <td>{forecast.type}</td>
-                <td>{forecast.getForecast()}</td>
+                <td style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <div style={{ width: 100 }}>
+                    <ForecastRow
+                      label={'Time'}
+                      value={`${forecast[0].getFormattedTime()}:00`}
+                    />
+                  </div>
+                </td>
+                <td>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        background: '#34b1eb',
+                        width: 30,
+                        height: 30,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderRadius: 50,
+                        marginRight: 30,
+                      }}
+                    >
+                      <Image
+                        src="/cloud.png"
+                        alt="img"
+                        width={15}
+                        height={18}
+                      />
+                    </div>
+                    <p>Cloudy</p>
+                  </div>
+                </td>
+                <td>
+                  <ForecastRow value={forecast[0].getForecast()} />
+                </td>
+                <td>
+                  <ForecastRow value={forecast[1].getForecast()} />
+                </td>
+                <td>
+                  <ForecastRow value={forecast[2].getForecast()} />
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
 
         <hr />
-
         <h2>All data for the latest measurement of each kind</h2>
         <table>
           <thead>
@@ -89,35 +208,13 @@ const Alternative = () => {
               <th>Data</th>
             </tr>
           </thead>
-
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>1</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <hr />
-
-        <h2>About last day</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Minimum temperature</th>
-              <th>Maximum temperature</th>
-              <th>Total precipitation</th>
-              <th>Average wind speed</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>1</td>
-              <td>1</td>
-              <td>1</td>
-            </tr>
+            {variable?.map((data, index) => (
+              <tr key={index}>
+                <td>{data.getType()}</td>
+                <td>{data.getValue()}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </main>

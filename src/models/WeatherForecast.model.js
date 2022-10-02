@@ -12,7 +12,7 @@ export const WeatherForecast = function (data) {
         return `${this.getTo()}${this.getUnit()}`;
       },
       getForecast: function () {
-        return `from ${this.getFromFormat()} to ${this.getToFormat()}`;
+        return `${this.getFromFormat()} - ${this.getToFormat()}`;
       },
     },
     WeatherData(data),

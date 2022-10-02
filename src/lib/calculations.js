@@ -30,15 +30,17 @@ export const getMinTemp = (array) => {
 };
 
 export const getPrecipitationSum = (array) => {
-  return Math.round(
-    getYesterdayValues(array, 'precipitation')
-      .map((data) => data.getValue())
-      .reduce((a, b) => a + b, 0),
-  );
+  return getYesterdayValues(array, 'precipitation')
+    .map((data) => data.getValue())
+    .reduce((a, b) => a + b, 0)
+    .toFixed(2);
 };
 
 export const getAverageWindSpeed = (array) => {
-  return (getYesterdayValues(array, 'wind speed')
-    .map((data) => data.getValue())
-    .reduce((a,b) => a + b, 0) / getYesterdayValues(array, 'wind speed').length).toFixed(2);
+  return (
+    getYesterdayValues(array, 'wind speed')
+      .map((data) => data.getValue())
+      .reduce((a, b) => a + b, 0) /
+    getYesterdayValues(array, 'wind speed').length
+  ).toFixed(2);
 };
