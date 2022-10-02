@@ -36,3 +36,9 @@ export const getPrecipitationSum = (array) => {
       .reduce((a, b) => a + b, 0),
   );
 };
+
+export const getAverageWindSpeed = (array) => {
+  return (getYesterdayValues(array, 'wind speed')
+    .map((data) => data.getValue())
+    .reduce((a,b) => a + b, 0) / getYesterdayValues(array, 'wind speed').length).toFixed(2);
+};
