@@ -14,11 +14,11 @@ function formatDate(date) {
 }
 
 const getYesterdayValues = (array = [], type = 'temperature') => {
-  return array
-    .filter(
-      (data) => formatDate(new Date(data.getTime())) === formatDate(yesterday),
-    )
-    .filter((data) => data.getType() === type);
+  return array.filter(
+    (data) =>
+      formatDate(new Date(data.getTime())) === formatDate(yesterday) &&
+      data.getType() === type,
+  );
 };
 
 export const getMaxTemp = (array) => {
