@@ -2,7 +2,7 @@ import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import React, { useEffect, useState } from 'react';
 import { WeatherService } from 'services/WeatherService';
-import Header from 'components/Header';
+import Header from 'components/Header/Header';
 import { xmlFetcher } from 'lib/fetchers';
 
 const weatherService = WeatherService(xmlFetcher);

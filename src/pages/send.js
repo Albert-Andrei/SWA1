@@ -1,8 +1,8 @@
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { WeatherService } from 'services/WeatherService';
-import Header from 'components/Header';
+import Header from 'components/Header/Header';
 import { xmlFetcher } from 'lib/fetchers';
 
 const weatherService = WeatherService(xmlFetcher);
@@ -41,7 +41,7 @@ const SendData = () => {
       alert('Success!');
       e.target.reset();
     } catch (error) {
-      alert('Something went wrong ' + JSON.stringify(error));
+      alert('Something went wrong ' + error);
     } finally {
       setLoading(false);
     }
@@ -68,6 +68,7 @@ const SendData = () => {
             <label htmlFor="select-location">City</label>
             <select
               id="select-location"
+              name="place"
               value={location}
               onChange={(e) => handleChangeLocation(e.target.value)}
             >

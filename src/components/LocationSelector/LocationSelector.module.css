@@ -1,0 +1,20 @@
+.location {
+  height: 60px;
+  background-color: white;
+  padding: 0 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.icon {
+  background-color: #34b1eb;
+  height: 35px;
+  width: 35px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+}
