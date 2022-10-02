@@ -5,7 +5,7 @@ import { WeatherService } from 'services/WeatherService';
 import Header from 'components/Header/Header';
 import { fetchFetcher } from '../lib/fetchers';
 import LocationSelector from 'components/LocationSelector/LocationSelector';
-import { getMaxTemp, getMinTemp, getPrecipitationSum } from 'lib/calculations';
+import { getMaxTemp, getMinTemp, getPrecipitationSum, getAverageWindSpeed } from 'lib/calculations';
 
 const weatherService = WeatherService(fetchFetcher);
 
@@ -16,6 +16,8 @@ const Home = () => {
   const [location, setLocation] = useState(LOCATIONS[0]);
   const [historicalData, setHistoricalData] = useState([]);
   const [forecastData, setForecastData] = useState([]);
+  var array = chunk(historicalData, 4);
+  var variable = array[array.length-1];
 
   useEffect(() => {
     handleLoadData();
@@ -49,6 +51,7 @@ const Home = () => {
   console.log('Max', getMaxTemp(historicalData));
   console.log('Min', getMinTemp(historicalData));
   console.log('Precipitation Sum', getPrecipitationSum(historicalData));
+  console.log('Average Wind Speed', getAverageWindSpeed(historicalData));
 
   return (
     <div className={styles.container}>
@@ -69,7 +72,10 @@ const Home = () => {
 
           <div
             style={{ background: 'white', padding: 20, borderRadius: 10 }}
-          ></div>
+          >
+            <p><b>Min:</b> {getMinTemp(historicalData)}<b> Max:</b>  {getMaxTemp(historicalData)} <b>Precipitation Sum:</b> {getPrecipitationSum(historicalData)} <b>Avg Wind Speed:</b> {getAverageWindSpeed(historicalData)}</p>
+
+          </div>
         </div>
 
         <div
@@ -145,11 +151,7 @@ const Home = () => {
             ))}
           </tbody>
         </table> */}
-
-        <h2>The hourly forecast for the next 24 hours</h2>
-
         <hr />
-
         <h2>All data for the latest measurement of each kind</h2>
         <table>
           <thead>
@@ -158,36 +160,14 @@ const Home = () => {
               <th>Data</th>
             </tr>
           </thead>
-
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>1</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <hr />
-
-        <h2>About last day</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Minimum temperature</th>
-              <th>Maximum temperature</th>
-              <th>Total precipitation</th>
-              <th>Average wind speed</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>1</td>
-              <td>1</td>
-              <td>1</td>
-            </tr>
-          </tbody>
+              {variable?.map((data, index) => (
+                <tr key={index}>
+                  <td>{data.getType()}</td>
+                  <td>{data.getValue()}</td>
+                </tr>
+              ))}
+            </tbody>
         </table>
       </main>
     </div>
