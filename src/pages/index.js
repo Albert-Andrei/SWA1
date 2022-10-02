@@ -5,6 +5,7 @@ import { WeatherService } from 'services/WeatherService';
 import Header from 'components/Header/Header';
 import { fetchFetcher } from '../lib/fetchers';
 import LocationSelector from 'components/LocationSelector/LocationSelector';
+import { getYesterdayValues } from 'lib/getValuesByType';
 
 const weatherService = WeatherService(fetchFetcher);
 
@@ -43,6 +44,30 @@ const Home = () => {
 
     return chunks;
   }
+
+  const getMaxTemp = () => {
+    return Math.max(
+      ...getYesterdayValues(historicalData).map((data) => data.getValue()),
+    );
+  };
+
+  const getMinTemp = () => {
+    return Math.min(
+      ...getYesterdayValues(historicalData).map((data) => data.getValue()),
+    );
+  };
+
+  const getPrecipitationSum = () => {
+    return Math.round(
+      getYesterdayValues(historicalData, 'precipitation')
+        .map((data) => data.getValue())
+        .reduce((a, b) => a + b, 0),
+    );
+  };
+
+  console.log('Max', getMaxTemp());
+  console.log('Min', getMinTemp());
+  console.log('Precipitation Sum', getPrecipitationSum());
 
   return (
     <div className={styles.container}>
